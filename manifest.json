@@ -1,15 +1,15 @@
 {
-    "name": "My YT Bookmarks",
+    "name": "TimeSheetX Automatic Fill",
     "version": "0.1.0",
-    "description": "Saving timestamps in YT videos",
-    "permissions": ["storage", "tabs"],
-    "host_permissions": ["https://*.youtube.com/*"],
+    "description": "fills out timesheetx",
+    "permissions": ["storage", "tabs", "userScripts"],
+    "host_permissions": ["https://johnshopkins.employment.ngwebsolutions.com/*"],
     "background": {
       "service_worker": "background.js"
     },
     "content_scripts": [
       {
-        "matches": ["https://*.youtube.com/*"],
+        "matches": ["https://johnshopkins.employment.ngwebsolutions.com/*"],
         "js": ["contentScript.js"]
       }
     ],
@@ -21,7 +21,7 @@
           "assets/delete.png",
           "assets/save.png"
         ],
-        "matches": ["https://*.youtube.com/*"]
+        "matches": ["https://johnshopkins.employment.ngwebsolutions.com/*"]
       }
     ],
     "action": {
@@ -30,7 +30,7 @@
         "24": "assets/ext-icon.png",
         "32": "assets/ext-icon.png"
       },
-      "default_title": "My YT Bookmarks",
+      "default_title": "My Times",
       "default_popup": "popup.html"
     },
     "manifest_version": 3

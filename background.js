@@ -1,12 +1,11 @@
-chrome.tabs.onUpdated.addListener((tabId, tab) => {
-    if (tab.url && tab.url.includes("youtube.com/watch")) {
-      const queryParameters = tab.url.split("?")[1];
-      const urlParameters = new URLSearchParams(queryParameters);
-  
-      chrome.tabs.sendMessage(tabId, {
-        type: "NEW",
-        videoId: urlParameters.get("v"),
-      });
-    }
-  });
-  
+//this exectues on page refresh
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  console.log(tab.url);
+
+  //base url is: https://johnshopkins.employment.ngwebsolutions.com/
+  //Tsx_StuManageTimesheet.aspx?TsId=894518
+  if (tab.url.includes("add=true#entries") && tab.url.includes("fuckTimesheet=True")) {
+    chrome.tabs.sendMessage(tabId, "SET_TIMES");
+  }
+  chrome.tabs.sendMessage(tabId, "tabID");
+})

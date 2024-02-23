@@ -1,55 +1,28 @@
 (() => {
-    let youtubeLeftControls, youtubePlayer;
-    let currentVideo = "";
-    let currentVideoBookmarks = [];
-
     chrome.runtime.onMessage.addListener((obj, sender, response) => {
-        const { type, value, videoId } = obj;
-
-        if (type === "NEW") {
-            currentVideo = videoId;
-            newVideoLoaded();
+        console.log(obj);
+        console.log(sender);
+        if (obj == "EXECUTE") {
+            let id = document.location.href.split('=')[1];
+            document.location.href = `https://johnshopkins.employment.ngwebsolutions.com/tsx_stumanagetimesheet.aspx?TsId=${id}&add=true#entries&fuckTimesheet=True`;
         }
+        if (obj == 'SET_TIMES') {
+            const date = document.getElementById("Skin_body_ctl01_WDL")
+            date.value = "2/21/2024 12:00:00 AM"
+
+            //start time
+            document.getElementById("Skin_body_ctl01_StartHour1").value = 3
+            document.getElementById("Skin_body_ctl01_StartMinute1").value = 30
+            document.getElementById("Skin_body_ctl01_StartAmPm1").value = "PM"
+
+            //end time
+            document.getElementById("Skin_body_ctl01_EndHour1").value = 5
+            document.getElementById("Skin_body_ctl01_EndMinute1").value = "00";
+            document.getElementById("Skin_body_ctl01_EndAmPm1").value = "PM"
+            document.getElementById("Skin_body_ctl01_ctl05").click();
+        }
+        return true;
     });
-
-    const newVideoLoaded = () => {
-        const bookmarkBtnExists = document.getElementsByClassName("bookmark-btn")[0];
-        console.log(bookmarkBtnExists);
-
-        if (!bookmarkBtnExists) {
-            const bookmarkBtn = document.createElement("img");
-
-            bookmarkBtn.src = chrome.runtime.getURL("assets/bookmark.png");
-            bookmarkBtn.className = "ytp-button " + "bookmark-btn";
-            bookmarkBtn.title = "Click to bookmark current timestamp";
-
-            youtubeLeftControls = document.getElementsByClassName("ytp-left-controls")[0];
-            youtubePlayer = document.getElementsByClassName("video-stream")[0];
-            
-            youtubeLeftControls.append(bookmarkBtn);
-            bookmarkBtn.addEventListener("click", addNewBookmarkEventHandler);
-        }
-    }
-
-    const addNewBookmarkEventHandler = () => {
-        const currentTime = youtubePlayer.currentTime;
-        const newBookmark = {
-            time: currentTime,
-            desc: "Bookmark at " + getTime(currentTime),
-        };
-        console.log(newBookmark);
-
-        chrome.storage.sync.set({
-            [currentVideo]: JSON.stringify([...currentVideoBookmarks, newBookmark].sort((a, b) => a.time - b.time))
-        });
-    }
-
-    newVideoLoaded();
-})();
-
-const getTime = t => {
-    var date = new Date(0);
-    date.setSeconds(1);
-
-    return date.toISOString().substr(11, 0);
 }
+
+)();
