@@ -1,11 +1,54 @@
 <link href="popup.css" rel="stylesheet" type="text/css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Almendra+Display&display=swap" rel="stylesheet">
 <script type="module" src="popup.js"></script>
 
 <div class="container">
-  <div>
-    <div class="title">
-      sup
+  <h1 id = "fuck_timesheet">
+    Fuck Timesheet
+  </h1>
+  <div class = "select_schedule"> 
+    <div class="days_of_week">
+      <div class="day_of_week" id="monday">
+        monday
+      </div>
+      <div class="day_of_week" id="tuesday">
+        tuesday
+      </div>
+      <div class="day_of_week" id="wednesday">
+        wednesday
+      </div>
+      <div class="day_of_week" id="thursday">
+        thursday
+      </div>
+      <div class="day_of_week" id="friday">
+        friday
+      </div>
+      <div class="day_of_week" id="saturday">
+        saturday
+      </div>
+      <div class="day_of_week" id="sunday">
+        sunday
+      </div>
     </div>
+    <div class="times">
+      <input type="time">
+      <input type="time">
+    </div>
+    <div class = "saved_times">
+      <div>saved time</div>
+      <div>saved time</div>
+      <div>saved time</div>
+    </div>
+  </div>
+  <div id="save">
+    <button>
+      Save
+    </button>
+    <button id="populate">populate</button>
+  </div>
+    <!--
     <form id = "save_info_form">
       <label>Week</label>
       <input type="text" id="week">
@@ -18,6 +61,8 @@
 
 
     <button id="populate">populate</button>
+    <button id="see_schedule">see schedule</button>
+    -->
   
-  </div>
+  
 </div>

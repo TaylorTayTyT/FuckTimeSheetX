@@ -8,10 +8,14 @@ chrome.tabs.query({active:true, currentWindow: true}, (tabs) => {
         console.log('will_populate');
         chrome.tabs.sendMessage(tabs[0].id, "EXECUTE");
     }
-    function save(info){
-        console.log(info);
+    function get_schedule_info(){
+        chrome.storage.local.get(["1"], (result)=>{
+            console.log(result);
+        })
     }
     document.getElementById('populate').onclick = populate;
+    document.getElementById('see_schedule').onclick = get_schedule_info;
+    /** 
     document.getElementById('save_info_form').addEventListener("submit", (e)=>{
         e.preventDefault(); 
         
@@ -29,5 +33,5 @@ chrome.tabs.query({active:true, currentWindow: true}, (tabs) => {
             })
         });
         console.log(dayOfWeek);
-    })
+    })*/
 })

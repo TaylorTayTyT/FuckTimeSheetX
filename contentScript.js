@@ -8,7 +8,7 @@
         }
         if (obj == 'SET_TIMES') {
             const date = document.getElementById("Skin_body_ctl01_WDL")
-            date.value = "2/21/2024 12:00:00 AM"
+            date.value = "2/27/2024 12:00:00 AM"
 
             //start time
             document.getElementById("Skin_body_ctl01_StartHour1").value = 3
