@@ -39,3 +39,8 @@
   right: 0;
   bottom: 0;
 }
+
+.selected{
+  border-right: solid 1px black;
+  background-color: azure;
+}

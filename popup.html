@@ -8,9 +8,12 @@
   <h1 id = "fuck_timesheet">
     Fuck Timesheet
   </h1>
+  <div id="test">
+    fsadsafasf
+  </div>
   <div class = "select_schedule"> 
     <div class="days_of_week">
-      <div class="day_of_week" id="monday">
+      <div class="day_of_week selected" id="monday">
         monday
       </div>
       <div class="day_of_week" id="tuesday">
@@ -33,17 +36,16 @@
       </div>
     </div>
     <div class="times">
-      <input type="time">
-      <input type="time">
+      <label>Clock In</label>
+      <input type="time" id = "clock_in">
+      <label>Clock Out</label>
+      <input type="time" id = "clock_out">
     </div>
-    <div class = "saved_times">
-      <div>saved time</div>
-      <div>saved time</div>
-      <div>saved time</div>
+    <div id = "saved_times">
     </div>
   </div>
   <div id="save">
-    <button>
+    <button id = "save_item">
       Save
     </button>
     <button id="populate">populate</button>
