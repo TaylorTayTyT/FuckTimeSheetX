@@ -1,4 +1,4 @@
-export function valid_time(startTime, endTime, allTimes){
+export default function valid_time(startTime, endTime, allTimes){
     //09:44
     const startHour = startTime.substring(0, 2);
     const endHour = endTime.substring(0, 2);
