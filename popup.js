@@ -29,10 +29,19 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         const startTime = document.getElementById("clock_in").value;
         const endTime = document.getElementById("clock_out").value;
         //check if appropritate time TODO
+        const new_times = valid_time(startTime, endTime)
+        if(!new_times) {
+            return; 
+        }
+
+        const [new_start, new_end] = new_times;
+
+
+
         const dayOfWeek = document.getElementsByClassName("selected")[0].id;
         const shift = {
-            "start": startTime,
-            "end": endTime
+            "start": new_start,
+            "end": new_end
         }
         chrome.storage.local.get(null, (data) => {
             let data_mut = data[dayOfWeek];
