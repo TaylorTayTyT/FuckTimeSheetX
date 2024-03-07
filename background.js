@@ -1,6 +1,7 @@
+
+
 //this exectues on page refresh
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  console.log(tab.url);
 
   //base url is: https://johnshopkins.employment.ngwebsolutions.com/
   //Tsx_StuManageTimesheet.aspx?TsId=894518
@@ -13,6 +14,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         end_reference: "am"
       }
     ]
+
     chrome.tabs.sendMessage(tabId, {
       action: "SET_TIMES", 
       times : times
