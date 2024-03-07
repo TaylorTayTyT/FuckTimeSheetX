@@ -2,6 +2,20 @@
 //this executes once you click the popup
 import valid_time from './utility.js';
 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    function round_down(event){
+        console.log(event.target.value);
+        const val_min = parseInt(event.target.value.substring(3, 5));
+        console.log(val_min)
+        let rounded_min = String(Math.floor(val_min / 15) * 15);
+        if(rounded_min.length == 1) {
+            rounded_min = "0" + rounded_min;
+        }
+        console.log(rounded_min)
+        const final_time = event.target.value.substring(0, 3) + rounded_min;
+        document.getElementById(event.target.id).value = final_time;
+        console.log(final_time)
+        
+    }
     function clear_display() {
         const curr_day = document.getElementsByClassName("selected")[0].id;
         chrome.storage.local.set({[curr_day]: {"status": "unset"}});
@@ -33,11 +47,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if(!new_times) {
             return; 
         }
-
         const [new_start, new_end] = new_times;
-
-
-
         const dayOfWeek = document.getElementsByClassName("selected")[0].id;
         const shift = {
             "start": new_start,
@@ -51,8 +61,6 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             chrome.storage.local.set({[dayOfWeek]: data_mut })
             update_time_display();
         })
-        
-
     }
     function dayOfWeekSelected(event) {
         const daysOfWeek = document.getElementsByClassName("day_of_week");
@@ -63,13 +71,17 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         update_time_display();
     }
     function populate() {
-        chrome.tabs.sendMessage(tabs[0].id, "EXECUTE");
+        chrome.tabs.sendMessage(tabs[0].id, "EXECUTE")
+        .catch(e => alert(e))
+
     }
     function initialize() {
-        console.log('initializing')
         document.getElementById('populate').onclick = populate;
         document.getElementById("save_item").onclick = save;
         document.getElementById("clear").onclick = clear_display; 
+
+        document.getElementById("clock_in").addEventListener("input", round_down);
+        document.getElementById("clock_out").addEventListener("input", round_down);
         const weekdays = ['monday', 'tueday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
         chrome.storage.local.get('monday', function (items) {

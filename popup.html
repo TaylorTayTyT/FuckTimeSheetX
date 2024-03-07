@@ -5,10 +5,11 @@
 <script type="module" src="popup.js"></script>
 
 <div class="container">
-  <h1 id = "fuck_timesheet">
+  <h1 id="fuck_timesheet">
     Fuck Timesheet
   </h1>
-  <div class = "select_schedule"> 
+  <div>Times will be rounded down to the nearest fifteen-minute interval</div>
+  <div class="select_schedule">
     <div class="days_of_week">
       <div class="day_of_week selected" id="monday">
         monday
@@ -32,20 +33,33 @@
         sunday
       </div>
     </div>
-    <div class="times">
-      <label>Clock In</label>
-      <input type="time" id = "clock_in">
-      <label>Clock Out</label>
-      <input type="time" id = "clock_out">
+    <div id="time_management">
+      <div class="times">
+        <label>Clock In</label>
+        <input type="time" id="clock_in">
+        <label>Clock Out</label>
+        <input type="time" id="clock_out">
+      </div>
+      <div>
+        <nav>
+          <ul>
+            <li id = "save_item"><a href="#" class="rainbow" > Save </a></li>
+            <li><a href="#" class="rainbow" id="populate"> Populate </a></li>
+            <li><a href="#" class="rainbow" id="clear"> Clear </a></li>
+          </ul>
+        </nav>
+      </div>
     </div>
-    <div id = "saved_times">
+    <div id="saved_times">
     </div>
   </div>
   <div id="save">
-    <button id = "save_item">
+    <!--
+    <button id = "save_item" class="rainbow">
       Save
     </button>
-    <button id="populate">populate</button>
-    <button id="clear">clear times</button>
+    <button id="populate" class="rainbow" >populate</button>
+    <button id="clear" class="rainbow">clear times</button>
+    -->
   </div>
 </div>
