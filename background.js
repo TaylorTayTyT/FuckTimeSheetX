@@ -1,11 +1,18 @@
 
 
 //this exectues on page refresh
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+chrome.storage.onChanged.addListener((changes, namespace) => {
+  for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
+    console.log(
+      `Storage key "${key}" in namespace "${namespace}" changed.`,
+      `Old value was "${oldValue}", new value is "${newValue}".`
+    );
+  }
+});
 
-  //base url is: https://johnshopkins.employment.ngwebsolutions.com/
-  //Tsx_StuManageTimesheet.aspx?TsId=894518
-  if (tab.url.includes("add=true#entries") && tab.url.includes("fuckTimesheet=True")) {
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (tab.url.includes("add=true#entries") && tab.url.includes(encodeURIComponent("fuckTimesheet=True"))) {
+    let params = new URLSearchParams(decodeURIComponent(tab.url.split('?')[1]));
     const times = [
       {
         start_hour: 8,
@@ -17,7 +24,8 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
     chrome.tabs.sendMessage(tabId, {
       action: "SET_TIMES", 
-      times : times
+      times : times,
+      items: decodeURIComponent(params.get("items"))
     });
   }
   chrome.tabs.sendMessage(tabId, "tabID");

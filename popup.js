@@ -68,16 +68,23 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         event.target.classList.add('selected');
         update_time_display();
     }
-    async function populate() {
-        chrome.storage.local.get(null, (items) => {
+    async function populate(){
+        populate_action();
+    }
+    async function populate_action() {
+        chrome.storage.local.get(null, async (items) => {
             const message = {
                 action: "EXECUTE",
                 items: items
             }
-            chrome.tabs.sendMessage(tabs[0].id, message)
-                .catch(e => alert(e))
-        })
 
+            const prep_execute = {
+                action: "PREP_EXECUTE",
+                items: items
+        }
+            await chrome.tabs.sendMessage(tabs[0].id, prep_execute);
+            await chrome.tabs.sendMessage(tabs[0].id, message);
+        })
 
     }
     function initialize() {
