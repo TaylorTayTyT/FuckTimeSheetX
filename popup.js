@@ -27,7 +27,6 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         document.getElementById("saved_times").innerHTML = "";
         const curr_day = document.getElementsByClassName("selected")[0].id;
         chrome.storage.local.get(curr_day, (results) => {
-            console.log(results);
             let time_keys = Object.keys(results[curr_day]);
             time_keys.pop();
             time_keys.forEach((element) => {
@@ -69,13 +68,14 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         update_time_display();
     }
     async function populate(){
-        populate_action();
+        await populate_action();
     }
     async function populate_action() {
         chrome.storage.local.get(null, async (items) => {
-            const message = {
+            let message = {
                 action: "EXECUTE",
-                items: items
+                items: items,
+                day: "day"
             }
 
             const prep_execute = {
@@ -83,22 +83,41 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
                 items: items
         }
             await chrome.tabs.sendMessage(tabs[0].id, prep_execute);
-            await chrome.tabs.sendMessage(tabs[0].id, message);
+
+            await chrome.storage.local.get(null, (items)=>{
+                const weekdays = Object.keys(items);
+                weekdays.forEach(weekday => {
+                    let instance = Object.keys(items[weekday]); 
+                    instance = instance.filter(item=>item !== "status");
+                    instance.forEach(async times=>{
+                        message.items = Object.values(items[weekday][times]);
+                        message.day = this_week_dates(weekday);
+                        console.log("weekday is " + weekday)
+                        await chrome.tabs.sendMessage(tabs[0].id, message);
+                    })
+                })
+            })
+            alert('done')
+            //await chrome.tabs.sendMessage(tabs[0].id, message);
+            /**
+             * i think popup remains open, so i can actually continually send 
+             * a message to keep adding until i run out of times
+             */
         })
 
     }
     function initialize() {
-        console.log(this_week_dates())
+        console.log('init')
         document.getElementById('populate').onclick = populate;
         document.getElementById("save_item").onclick = save;
         document.getElementById("clear").onclick = clear_display;
 
         document.getElementById("clock_in").addEventListener("input", round_down);
         document.getElementById("clock_out").addEventListener("input", round_down);
-        const weekdays = ['monday', 'tueday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-        chrome.storage.local.get('monday', function (items) {
-            if (items.monday == undefined) {
+        chrome.storage.local.get('Mon', function (items) {
+            if (items.Mon == undefined) {
                 weekdays.forEach((weekday) => {
                     chrome.storage.local.set({
                         [weekday]: {

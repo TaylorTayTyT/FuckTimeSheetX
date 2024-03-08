@@ -17,7 +17,7 @@ export default function valid_time(startTime, endTime){
     return [start_round_down, end_round_down]; 
 }
 
-export function this_week_dates(){
+export function this_week_dates(day_w){
 
     const weekday_table = {
         "Mon": 0, 
@@ -49,21 +49,12 @@ export function this_week_dates(){
     
     //changes the curr_date to Monday 
     curr_date.setDate(curr_date.getDate() - weekday_table[day_of_week]);
-    console.log('sup')
 
-    let date_arr = [];
-    for (let i = 0; i < 7; i++){
-        let curr_date_trans = new Date(curr_date);
-        curr_date_trans.setDate(curr_date_trans.getDate() + i);
-
-        curr_date_trans = curr_date_trans.toString().split(" ");
-        console.log(i)
-        console.log(curr_date_trans)
-        let month = months[curr_date_trans[1]];
-        let day = curr_date_trans[2];
-        let year = curr_date_trans[3];
-        date_arr.push(`${month}/${day}/${year} 12:00:00 AM`);
-    }
-
-    return date_arr; 
+    let curr_date_trans = new Date(curr_date);
+    curr_date_trans.setDate(curr_date_trans.getDate() + weekday_table[day_w]);
+    curr_date_trans = curr_date_trans.toString().split(" ");
+    let month = months[curr_date_trans[1]];
+    let day = curr_date_trans[2];
+    let year = curr_date_trans[3];
+    return `${month}/${day}/${year} 12:00:00 AM`;
 }
