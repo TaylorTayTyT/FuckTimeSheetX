@@ -65,18 +65,20 @@ async function populate_action() {
                 if(items[weekday].hasOwnProperty("status")) {
                     delete items[weekday]["status"];
                 }
+                if(Object.keys(items[weekday]).length == 0){
+                    console.log('delete')
+                    delete items[weekday];
+                }
             }
         })
     }
     chrome.storage.local.get(null, (items) => {
         remove_status(items);
+        console.log(items)
         set_stack(items);
     })
-
-}
-    
+}  
     function initialize() {
-        console.log('init')
         document.getElementById('populate').onclick = populate;
         document.getElementById("save_item").onclick = save;
         document.getElementById("clear").onclick = clear_display;
