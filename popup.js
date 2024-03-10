@@ -48,8 +48,6 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             "start": new_start,
             "end": new_end
         }
-
-        console.log(shift)
         chrome.storage.local.get(null, (data) => {
             let data_mut = data[dayOfWeek];
             let num_keys = Object.keys(data[dayOfWeek]).length;
@@ -67,42 +65,28 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         event.target.classList.add('selected');
         update_time_display();
     }
-    async function populate(){
+    async function populate() {
         await populate_action();
     }
     async function populate_action() {
-        chrome.storage.local.get(null, async (items) => {
-            let message = {
-                action: "EXECUTE",
-                items: items,
-                day: "day"
-            }
-
-            const prep_execute = {
-                action: "PREP_EXECUTE",
-                items: items
+        let message = {
+            action: "EXECUTE",
         }
-            await chrome.tabs.sendMessage(tabs[0].id, prep_execute);
-
-            await chrome.storage.local.get(null, (items)=>{
-                const weekdays = Object.keys(items);
-                weekdays.forEach(weekday => {
-                    let instance = Object.keys(items[weekday]); 
-                    instance = instance.filter(item=>item !== "status");
-                    instance.forEach(async times=>{
-                        message.items = Object.values(items[weekday][times]);
-                        message.day = this_week_dates(weekday);
-                        console.log("weekday is " + weekday)
-                        await chrome.tabs.sendMessage(tabs[0].id, message);
-                    })
+        function set_stack(items) {
+            console.log(items);
+            try{
+                delete items['stack']['stack'];
+            } catch(e) {
+                console.log(e)
+            } finally {
+                chrome.storage.local.set({ "stack": items })
+                .then(() => {
+                    chrome.tabs.sendMessage(tabs[0].id, message);
                 })
-            })
-            alert('done')
-            //await chrome.tabs.sendMessage(tabs[0].id, message);
-            /**
-             * i think popup remains open, so i can actually continually send 
-             * a message to keep adding until i run out of times
-             */
+            }
+        }
+        chrome.storage.local.get(null, (items) => {
+            set_stack(items);
         })
 
     }
