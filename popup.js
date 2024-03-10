@@ -85,7 +85,19 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
                 })
             }
         }
+
+        function remove_status(items) {
+            const item_keys = Object.keys(items)
+            item_keys.forEach(weekday=>{
+                if(weekday != "stack") {
+                    if(items[weekday].hasOwnProperty("status")) {
+                        delete items[weekday]["status"];
+                    }
+                }
+            })
+        }
         chrome.storage.local.get(null, (items) => {
+            remove_status(items);
             set_stack(items);
         })
 

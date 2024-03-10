@@ -13,67 +13,76 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  function format_times(times_JSON){
+  function format_times(times_JSON) {
     const start = times_JSON.items[1].split(":");
     let start_reference = "AM";
     const end = times_JSON.items[0].split(":");
     let start_hour = parseInt(start[0]);
-    if(start_hour >= 12){
+    if (start_hour >= 12) {
       start_reference = "PM";
-      if(start_hour != 12) start_hour -= 12 
+      if (start_hour != 12) start_hour -= 12
     }
 
     const day = times_JSON.day;
 
     let start_min = parseInt(start[1]);
-    if(start_min == 0) {
+    if (start_min == 0) {
       start_min = "00"
-    }else{
+    } else {
       start_min = String(start_min);
     }
     let end_hour = parseInt(end[0]);
     let end_min = parseInt(end[1]);
-    if(end_min == 0) {
+    if (end_min == 0) {
       end_min = "00";
-    }else{
+    } else {
       end_min = String(end_hour)
     }
     let end_reference = "AM";
-    if(end_hour >= 12){
+    if (end_hour >= 12) {
       end_reference = "PM";
-      if(end_hour != 12) end_hour -= 12 
+      if (end_hour != 12) end_hour -= 12
     }
 
-    const times = 
-      {
-        start_hour: start_hour,
-        start_min: start_min,
-        start_reference: start_reference,
-        end_hour: end_hour,
-        end_min: end_min,
-        end_reference: end_reference,
-        day: day
-      }
-      return times;
+    const times =
+    {
+      start_hour: start_hour,
+      start_min: start_min,
+      start_reference: start_reference,
+      end_hour: end_hour,
+      end_min: end_min,
+      end_reference: end_reference,
+      day: day
+    }
+    return times;
   }
   let params = new URLSearchParams(decodeURIComponent(tab.url.split('?')[1]));
   //this is meant to check if there are still items in the stack, then we should continue add times
-  //careful this can end in an infinite looop 
+  //careful this can end in an infinite loop 
   /** 
-  if(tab.url.includes("https://johnshopkins.employment.ngwebsolutions.com/tsx_stumanagetimesheet.aspx?TsId=")){
-    chrome.storage.local.get(["stack"], (items)=>{
-      if(items != null) {
-        chrome.tabs.sendMessage(tabId, {
-          action: "EXECUTE", 
-        });
-      }
+  if (tab.url.includes("https://johnshopkins.employment.ngwebsolutions.com/tsx_stumanagetimesheet.aspx?TsId=")) {
+    //ok i googled this and to delete an element in chrome storage i have to remove the whole things and add 
+    // a new object
+    chrome.storage.local.get("stack", (items) => {
+      //there are still items in the stack
+      const stack_keys = Object.keys(items.stack);
+      stack_keys.forEach(weekday => {
+        const weekday_times = Object.keys(weekday);
+        //there are actually times to input
+        if (weekday_times.length > 1) {
+          weekday_times.forEach(times => {
+            console.log(times);
+            chrome.storage.local.remove("stack")
+          })
+        }
+      })
     })
   }*/
 
   if (tab.url.includes("add=true#entries") && params.has("fuckTimesheet")) {
-    chrome.storage.local.get(["stack"], (items)=>{
-      const stack = items.stack; 
-      
+    chrome.storage.local.get(["stack"], (items) => {
+      const stack = items.stack;
+
     })
 
     /** 
