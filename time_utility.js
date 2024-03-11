@@ -17,6 +17,7 @@ export default function valid_time(startTime, endTime){
     return [start_round_down, end_round_down]; 
 }
 
+//input is like "Mon" or "Tue" etc
 export function this_week_dates(day_w){
 
     const weekday_table = {

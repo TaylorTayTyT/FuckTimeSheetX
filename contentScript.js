@@ -4,6 +4,7 @@
         const id = params.get("TsId");
         params.append("fuckTimesheet", "True");
         params = encodeURIComponent(params);
+        console.log(obj.times)
 
         document.location.href = `https://johnshopkins.employment.ngwebsolutions.com/tsx_stumanagetimesheet.aspx?TsId=${id}&add=true#entries${params}`;
     }
@@ -26,7 +27,7 @@
     }
     chrome.runtime.onMessage.addListener((obj, sender, response) => {
         if (obj.action == "EXECUTE") {
-            execute()
+            execute(obj)
         }
         if (obj.action == 'SET_TIMES') {
             console.log(obj.times);

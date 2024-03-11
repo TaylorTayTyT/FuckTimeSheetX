@@ -45,7 +45,6 @@ async function populate_action() {
         action: "EXECUTE",
     }
     function set_stack(items) {
-        console.log(items);
         try{
             delete items['stack']['stack'];
         } catch(e) {
