@@ -1,37 +1,52 @@
 {
-    "name": "TimeSheetX Automatic Fill",
-    "version": "0.1.0",
-    "description": "fills out timesheetx",
-    "permissions": ["storage", "tabs", "userScripts"],
-    "host_permissions": ["https://johnshopkins.employment.ngwebsolutions.com/*"],
-    "background": {
-      "service_worker": "background.js"
+  "manifest_version": 3,
+  "name": "TimeSheetX Automatic Fill",
+  "version": "0.1.0",
+  "description": "fills out timesheetx",
+  "permissions": [
+    "storage",
+    "tabs",
+    "userScripts",
+    "scripting",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://johnshopkins.employment.ngwebsolutions.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://johnshopkins.employment.ngwebsolutions.com/*"
+      ],
+      "js": [
+        "contentScript.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "assets/bookmark.png",
+        "assets/play.png",
+        "assets/delete.png",
+        "assets/save.png"
+      ],
+      "matches": [
+        "https://johnshopkins.employment.ngwebsolutions.com/*"
+      ]
+    }
+  ],
+  "action": {
+    "default_icon": {
+      "16": "assets/ext-icon.png",
+      "24": "assets/ext-icon.png",
+      "32": "assets/ext-icon.png"
     },
-    "content_scripts": [
-      {
-        "matches": ["https://johnshopkins.employment.ngwebsolutions.com/*"],
-        "js": ["contentScript.js"]
-      }
-    ],
-    "web_accessible_resources": [
-      {
-        "resources": [
-          "assets/bookmark.png",
-          "assets/play.png",
-          "assets/delete.png",
-          "assets/save.png"
-        ],
-        "matches": ["https://johnshopkins.employment.ngwebsolutions.com/*"]
-      }
-    ],
-    "action": {
-      "default_icon": {
-        "16": "assets/ext-icon.png",
-        "24": "assets/ext-icon.png",
-        "32": "assets/ext-icon.png"
-      },
-      "default_title": "My Times",
-      "default_popup": "popup.html"
-    },
-    "manifest_version": 3
+    "default_title": "My Times",
+    "default_popup": "popup.html"
+  }
 }

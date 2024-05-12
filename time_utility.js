@@ -1,5 +1,10 @@
+/**
+ * ensures that inputted time is valid
+ * @param {String HH:MM} startTime the shift start time
+ * @param {String HH:MM} endTime the shift end time
+ * @returns false if not a valid time, rounded_down time if valid
+ */
 export default function valid_time(startTime, endTime){
-    //09:44
     const startHour = startTime.substring(0, 2);
     const endHour = endTime.substring(0, 2);
     const startMin = startTime.substring(3, 5);
@@ -17,9 +22,12 @@ export default function valid_time(startTime, endTime){
     return [start_round_down, end_round_down]; 
 }
 
-//input is like "Mon" or "Tue" etc
+/**
+ * gives desired weekday's specific date
+ * @param {String} day_w input is the day of the week ("Mon", "Tue", etc)
+ * @returns the MM/DD/YY 12:00:00am of the inputted day of week
+ */
 export function this_week_dates(day_w){
-
     const weekday_table = {
         "Mon": 0, 
         "Tue": 1, 
@@ -29,7 +37,6 @@ export function this_week_dates(day_w){
         "Sat": 5,
         "Sun": 6
     }
-
     const months = {
         "Jan": "1",
         "Feb": "2", 

@@ -11,15 +11,19 @@ export function display(time) {
     document.getElementById("saved_times").appendChild(newElement);
 }
 export function update_time_display() {
+    try{
     document.getElementById("saved_times").innerHTML = "";
     const curr_day = document.getElementsByClassName("selected")[0].id;
     chrome.storage.local.get(curr_day, (results) => {
+        if(!results[curr_day]) return
         let time_keys = Object.keys(results[curr_day]);
         time_keys.pop();
         time_keys.forEach((element) => {
             display(results[curr_day][element]);
         })
-    })
+    })}catch (e) {
+        console.log(e)
+    }
 }
 
 export function dayOfWeekSelected(event) {
