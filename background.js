@@ -128,50 +128,45 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     document.getElementById("Skin_body_ctl01_ctl05").click();
   }
 
-  function pick_one() {
+  function pick_one(shift_interval) {
     console.log('picking one')
-    chrome.storage.local.get("stack", (items) => {
-      //console.log(items)
-      if (!items) return
-      console.log("LOGGING ITEMS");
-      console.log(items);
-      const stack = items.stack;
-      if (Object.keys(stack).length == 0) return; //checking if there is smth in the stack
-
-      const weekday = Object.keys(stack)[0]; //Mon
-      const time_key = Object.keys(stack[weekday])[0] //2
-      let { end, start } = stack[weekday][time_key];
-      let curr_date = this_week_dates(weekday);
-      let times = format_times({
-        start: start,
-        end: end,
-        day: curr_date
-      });
-
-      chrome.scripting
-        .executeScript({
-          target: { tabId: tabId },
-          args: [times],
-          func: set_times
-        })
-        .then(() => console.log("script injected"));
-    })
+    chrome.scripting
+      .executeScript({
+        target: { tabId: tabId },
+        args: [shift_interval],
+        func: set_times
+      })
+      .then(() => console.log("script injected"));
   }
 
-  if (tab.url.toLowerCase().includes("add=true#entries".toLowerCase())) {
+
+  if (changeInfo.status == "complete" && tab.url.toLowerCase().includes("add=true#entries".toLowerCase())) {
+    let count = 0;
     chrome.storage.local.get("stack", (items) => {
+      if (count > 0) return;
+      count += 1;
       if (Object.keys(items).length == 0) return;
-      if (items.stack.hasOwnProperty("stack")) delete items.stack.stack
-      let times = {};
+      if (items.stack.hasOwnProperty("stack")) delete items.stack.stack // cleaning up
       items = items.stack;
+      if (Object.keys(items).length == 0) return;
       if (items.hasOwnProperty("Mon")) {
-        let time_key = Object.keys(items.Mon)[0]
-        times = items.Mon[time_key];
-        console.log("deleting vvvvv");
-        console.log(items.Mon[time_key]);
+        const time_key = Object.keys(items.Mon)[0] //used so I can retrieve specific objects from items
+        const times = items.Mon[time_key]
+
+        console.log(times)
+
+        const end_time = times.end;
+        const start_time = times.start;
+        const curr_date = this_week_dates("Mon");
+
+        const shift_interval = {
+          start: start_time,
+          end: end_time,
+          day: curr_date
+        }
+        pick_one(format_times(shift_interval));
         delete items.Mon[time_key];
-        if (Object.keys(items.Mon).length == 0) delete items.Mon
-        chrome.storage.local.set({ "stack": items });
+        if (Object.keys(items.Mon).length == 0) delete items.Mon;
 
       } else if (items.hasOwnProperty("Tue")) {
 
@@ -198,9 +193,38 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       //update the stack
       chrome.storage.local.remove("stack")
         .then(() => {
-          chrome.storage.local.set({ "stack": items });
-          pick_one();
+          if (items.stack && Object.keys(items.stack).length == 0) {
+            chrome.storage.local.remove("stack");
+          }
+          else chrome.storage.local.set({ "stack": items });
         });
     })
   }
+  else if (changeInfo.status == "complete" && tab.url.toLowerCase().includes("https://johnshopkins.employment.ngwebsolutions.com/tsx_stumanagetimesheet.aspx?TsId=".toLowerCase())) {
+    chrome.storage.local.get("stack", (items) => {
+      console.log(items);
+      if (!items) return;
+      if(Object.keys(items.stack).length == 0){
+        chrome.storage.local.remove("stack");
+        return;
+      } 
+      if(!items.stack) return; 
+
+      function clickAddButton() {
+        const params = new URLSearchParams(document.location.href.split('?')[1]);
+        const id = params.get("TsId");
+        console.log(id)
+        document.location.href = `https://johnshopkins.employment.ngwebsolutions.com/tsx_stumanagetimesheet.aspx?TsId=${id}&add=true#entries`
+      }
+
+      chrome.scripting
+        .executeScript({
+          target: { tabId: tabId },
+          args: [],
+          func: clickAddButton
+        })
+        .then(() => console.log('redirecting'));
+    })
+  }
 })
+
