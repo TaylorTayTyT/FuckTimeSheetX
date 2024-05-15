@@ -44,13 +44,6 @@ function this_week_dates(day_w) {
   let year = curr_date_trans[3];
   return `${month}/${day}/${year} 12:00:00 AM`;
 }
-chrome.runtime.onConnect.addListener(function(port) {
-  if (port.name === "popup") {
-      port.onDisconnect.addListener(function() {
-         chrome.storage.local.remove("stack");
-      });
-  }
-});
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   /**
@@ -116,8 +109,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
  * @param {Object} obj 
  */
   function set_times(obj) {
-    console.log(obj)
-
     const weekday_table = {
       "Mon": 0,
       "Tue": 1,
@@ -151,7 +142,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
  * @param {timeObject} shift_interval 
  */
   function pick_one(shift_interval) {
-    console.log(shift_interval)
     chrome.scripting
       .executeScript({
         target: { tabId: tabId },
@@ -180,9 +170,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
       const end_time = times.end;
       const start_time = times.start;
-      
-  
-      //const curr_date = this_week_dates(day_w);
 
       const shift_interval = {
         start: start_time,
@@ -219,7 +206,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       function clickAddButton() {
         const params = new URLSearchParams(document.location.href.split('?')[1]);
         const id = params.get("TsId");
-        console.log(id)
         document.location.href = `https://johnshopkins.employment.ngwebsolutions.com/tsx_stumanagetimesheet.aspx?TsId=${id}&add=true#entries`
       }
 

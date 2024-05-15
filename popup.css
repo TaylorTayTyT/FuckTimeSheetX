@@ -57,9 +57,15 @@ ul{
   background-color: azure;
 }
 
+.cancel{
+  color: red; 
+  max-width: 30px;
+  aspect-ratio: 1 / 1;
+}
+
 .added_time{
   border-bottom: solid 1px black;
-  padding-bottom: 1rem;
+  padding-bottom: 0.5rem;
 }
 
 .rainbow{
