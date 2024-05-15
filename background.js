@@ -44,6 +44,14 @@ function this_week_dates(day_w) {
   let year = curr_date_trans[3];
   return `${month}/${day}/${year} 12:00:00 AM`;
 }
+chrome.runtime.onConnect.addListener(function(port) {
+  if (port.name === "popup") {
+      port.onDisconnect.addListener(function() {
+         chrome.storage.local.remove("stack");
+      });
+  }
+});
+
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   /**
    * format input to send to fill out TimesheetX
@@ -103,18 +111,29 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     console.log(times);
     return times;
   }
-
+/**
+ * Actually manipulates the DOM to set times. 
+ * @param {Object} obj 
+ */
   function set_times(obj) {
-    console.log("setting_times")
     console.log(obj)
-    console.log(obj.start_hour)
 
-    const date = document.getElementById("Skin_body_ctl01_WDL")
-    date.value = obj.day;
+    const weekday_table = {
+      "Mon": 0,
+      "Tue": 1,
+      "Wed": 2,
+      "Thu": 3,
+      "Fri": 4,
+      "Sat": 5,
+      "Sun": 6
+    }
 
-    //data
-    document.getElementById("Skin_body_ctl01_WDL").value = obj.day;
-    console.log(document.getElementById("Skin_body_ctl01_WDL"));
+    const date_table = Array.from(document.getElementById("Skin_body_ctl01_WDL").options);
+    const curr_date = date_table[weekday_table[obj.day]].value;
+
+    //date
+    document.getElementById("Skin_body_ctl01_WDL").value = curr_date;
+
     //start time
     document.getElementById("Skin_body_ctl01_StartHour1").value = obj.start_hour;
     document.getElementById("Skin_body_ctl01_StartMinute1").value = obj.start_min;
@@ -127,9 +146,12 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
     document.getElementById("Skin_body_ctl01_ctl05").click();
   }
-
+/** Initiates function that will populate times.
+ * 
+ * @param {timeObject} shift_interval 
+ */
   function pick_one(shift_interval) {
-    console.log('picking one')
+    console.log(shift_interval)
     chrome.scripting
       .executeScript({
         target: { tabId: tabId },
@@ -139,8 +161,9 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       .then(() => console.log("script injected"));
   }
 
-
+  
   if (changeInfo.status == "complete" && tab.url.toLowerCase().includes("add=true#entries".toLowerCase())) {
+    //executes steps needed to populate times
     let count = 0;
     chrome.storage.local.get("stack", (items) => {
       if (count > 0) return;
@@ -149,47 +172,27 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       if (items.stack.hasOwnProperty("stack")) delete items.stack.stack // cleaning up
       items = items.stack;
       if (Object.keys(items).length == 0) return;
-      if (items.hasOwnProperty("Mon")) {
-        const time_key = Object.keys(items.Mon)[0] //used so I can retrieve specific objects from items
-        const times = items.Mon[time_key]
 
-        console.log(times)
+      const day_w = Object.keys(items)[0];
 
-        const end_time = times.end;
-        const start_time = times.start;
-        const curr_date = this_week_dates("Mon");
+      const time_key = Object.keys(items[day_w])[0] //used so I can retrieve specific objects from items
+      const times = items[day_w][time_key]
 
-        const shift_interval = {
-          start: start_time,
-          end: end_time,
-          day: curr_date
-        }
-        pick_one(format_times(shift_interval));
-        delete items.Mon[time_key];
-        if (Object.keys(items.Mon).length == 0) delete items.Mon;
+      const end_time = times.end;
+      const start_time = times.start;
+      
+  
+      //const curr_date = this_week_dates(day_w);
 
-      } else if (items.hasOwnProperty("Tue")) {
-
+      const shift_interval = {
+        start: start_time,
+        end: end_time,
+        day: day_w
       }
-      else if (items.hasOwnProperty("Wed")) {
+      pick_one(format_times(shift_interval));
+      delete items[day_w][time_key];
+      if (Object.keys(items[day_w]).length == 0) delete items[day_w];
 
-      }
-      else if (items.hasOwnProperty("Thu")) {
-
-      }
-      else if (items.hasOwnProperty("Fri")) {
-
-      }
-      else if (items.hasOwnProperty("Sat")) {
-
-      }
-      else if (items.hasOwnProperty("Sun")) {
-
-      }
-      else {
-        console.log('Nothing in the stack');
-        return chrome.storage.local.remove("stack");
-      }
       //update the stack
       chrome.storage.local.remove("stack")
         .then(() => {
@@ -201,15 +204,18 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     })
   }
   else if (changeInfo.status == "complete" && tab.url.toLowerCase().includes("https://johnshopkins.employment.ngwebsolutions.com/tsx_stumanagetimesheet.aspx?TsId=".toLowerCase())) {
+    //recursively adds times until stack is empty
     chrome.storage.local.get("stack", (items) => {
-      console.log(items);
       if (!items) return;
-      if(Object.keys(items.stack).length == 0){
+      if (Object.keys(items.stack).length == 0) {
         chrome.storage.local.remove("stack");
         return;
-      } 
-      if(!items.stack) return; 
+      }
+      if (!items.stack) return;
 
+      /**
+       * redirects to page where you can add details about your shift.
+       */
       function clickAddButton() {
         const params = new URLSearchParams(document.location.href.split('?')[1]);
         const id = params.get("TsId");

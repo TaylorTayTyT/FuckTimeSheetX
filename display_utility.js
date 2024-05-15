@@ -34,3 +34,4 @@ export function dayOfWeekSelected(event) {
     event.target.classList.add('selected');
     update_time_display();
 }
+

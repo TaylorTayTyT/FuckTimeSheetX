@@ -102,6 +102,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         document.getElementById("clock_out").addEventListener("input", round_down);
         const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
+        
         chrome.storage.local.get('Mon', function (items) {
             if (items.Mon == undefined) {
                 weekdays.forEach((weekday) => {
@@ -120,6 +121,5 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         }
         update_time_display();
     }
-
     initialize();
 })
