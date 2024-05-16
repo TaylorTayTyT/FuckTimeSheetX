@@ -3,12 +3,27 @@ export function clear_display() {
     chrome.storage.local.set({ [curr_day]: { "status": "unset" } });
     document.getElementById("saved_times").innerHTML = "";
 }
+
+function convert_to_standard_time(time){
+    const time_arr = time.split(":");
+    let hour = parseInt(time_arr[0]);
+    let min = time_arr[1];
+    if(parseInt(min) == 0){
+        min = "00";
+    }
+    if(hour > 12) {
+        hour -= 12; 
+        return `${hour}:${min} PM`;
+    };
+    return time + " AM"; 
+}
+
 export function display(time) {
     const newElement = document.createElement('div');
     const day_w = document.querySelector(".selected").id; 
     newElement.id = `Time_item_${day_w}_${String(time.start)}`;
     newElement.classList.add("added_time");
-    const time_text = `start: ${time.start} \t end: ${time.end}`;
+    const time_text = `start: ${convert_to_standard_time(time.start)} \t end: ${convert_to_standard_time(time.end)}`;
     newElement.innerText = time_text;
     document.getElementById("saved_times").appendChild(newElement);
     newElement.addEventListener('mouseenter', ()=>{

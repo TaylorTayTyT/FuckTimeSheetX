@@ -90,6 +90,13 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             set_stack(items);
         })
     }
+
+    /**
+     * Clears the stack.
+     */
+    function clear_stack(){
+        chrome.storage.local.remove("clear");
+    }
     /**
      * initialize the popup
      */
@@ -97,6 +104,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         document.getElementById('populate').onclick = populate;
         document.getElementById("save_item").onclick = save;
         document.getElementById("clear").onclick = clear_display;
+        document.getElementById("clear_stack").onclick = clear_stack;
 
         document.getElementById("clock_in").addEventListener("input", round_down);
         document.getElementById("clock_out").addEventListener("input", round_down);
