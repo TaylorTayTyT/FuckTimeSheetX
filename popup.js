@@ -1,6 +1,6 @@
 // adding a new bookmark row to the popup
 //this executes once you click the popup
-import { clear_display, update_time_display, dayOfWeekSelected } from './display_utility.js';
+import { clear_display, update_time_display, dayOfWeekSelected, calculate_total_time } from './display_utility.js';
 import valid_time from './time_utility.js';
 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     /**
