@@ -3,8 +3,9 @@
   src: url('./fonts/Jabin-Regular.ttf');
 }
 
+
 .container {
-  width: 280px;
+  width: 380px;
   height: fit-content;
   color: #314d3e;
 }
@@ -58,14 +59,20 @@ ul{
 }
 
 .cancel{
+  display: inline;
   color: red; 
-  max-width: 30px;
+  max-width: 15%;
   aspect-ratio: 1 / 1;
+  float: right;
+  transform: translate(20%, -40%);
+  cursor: pointer;
 }
 
 .added_time{
-  border-bottom: solid 1px black;
-  padding-bottom: 0.5rem;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  padding-top: 0.5rem;  
+  box-shadow: rgba(0,0,0, .2) 0.1rem 0.1rem;
 }
 
 .rainbow{

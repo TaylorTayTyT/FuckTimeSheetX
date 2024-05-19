@@ -8,8 +8,12 @@ function convert_to_standard_time(time){
     const time_arr = time.split(":");
     let hour = parseInt(time_arr[0]);
     let min = time_arr[1];
+    console.log(min)
     if(parseInt(min) == 0){
         min = "00";
+    }
+    if(hour == 12) {
+        return `${hour}:${min} PM`;
     }
     if(hour > 12) {
         hour -= 12; 
@@ -23,14 +27,14 @@ export function display(time) {
     const day_w = document.querySelector(".selected").id; 
     newElement.id = `Time_item_${day_w}_${String(time.start)}`;
     newElement.classList.add("added_time");
-    const time_text = `start: ${convert_to_standard_time(time.start)} \t end: ${convert_to_standard_time(time.end)}`;
+    const time_text = `start: ${convert_to_standard_time(time.start)} \n end: ${convert_to_standard_time(time.end)}`;
     newElement.innerText = time_text;
     document.getElementById("saved_times").appendChild(newElement);
     newElement.addEventListener('mouseenter', ()=>{
         const cancelElement = document.createElement('img');
         cancelElement.src = "./assets/cancel.png"; 
         cancelElement.classList.add("cancel");
-        newElement.appendChild(cancelElement);
+        newElement.prepend(cancelElement);
         cancelElement.addEventListener('click', (e)=>{
             const newElementArr = newElement.id.split('_');
             const day_w = newElementArr[2];

@@ -22,25 +22,63 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     async function save() {
         const startTime = document.getElementById("clock_in").value;
         const endTime = document.getElementById("clock_out").value;
-
-        const new_times = valid_time(startTime, endTime)
-        if (!new_times) {
-            return;
-        }
-        const [new_start, new_end] = new_times;
         const dayOfWeek = document.getElementsByClassName("selected")[0].id;
-        const shift = {
-            "start": new_start,
-            "end": new_end
-        }
-        chrome.storage.local.get(null, (data) => {
-            let data_mut = data[dayOfWeek];
-            let num_keys = Object.keys(data[dayOfWeek]).length;
-            data_mut[(num_keys + 1).toString()] = shift;
-            data_mut['status'] = 'set';
-            chrome.storage.local.set({ [dayOfWeek]: data_mut })
-            update_time_display();
-        })
+
+        const new_times = valid_time(startTime, endTime, dayOfWeek)
+
+        const startHour = parseInt(startTime.substring(0, 2));
+        const endHour = parseInt(endTime.substring(0, 2));
+        const startMin = parseInt(startTime.substring(3, 5));
+        const endMin = parseInt(endTime.substring(3, 5));
+
+        chrome.storage.local.get(dayOfWeek, (items) => {
+            for (let item in items[dayOfWeek]) {
+                console.log(item)
+                if (item == "status") continue;
+                const { end, start } = items[dayOfWeek][item];
+                let [item_start_hour, item_start_min] = start.split(":").map((elem) => parseInt(elem));
+                let [item_end_hour, item_end_min] = end.split(":").map((elem) => parseInt(elem));
+
+                console.log(`end: ${endTime}, start: ${startTime}`);
+                console.log(`item_end${end}, item_start${start}`)
+
+                function time_is_before(){
+                    if(endHour < item_start_hour) return true; 
+                    if(endHour > item_start_hour) return false; 
+                    if(endMin < item_end_min) return true; 
+                    return false; 
+                }
+
+                function time_is_after(){
+                    if(startHour > item_end_hour) return true; 
+                    if(startHour < item_end_hour) return false; 
+                    if(startMin > item_end_min) return true; 
+                    return false; 
+                }
+
+                if (!(time_is_after() || time_is_before())) {
+                    return;
+                }
+
+                if (!new_times) {
+                    return;
+                }
+            }
+            const [new_start, new_end] = new_times;
+                const shift = {
+                    "start": new_start,
+                    "end": new_end
+                }
+                chrome.storage.local.get(null, (data) => {
+                    let data_mut = data[dayOfWeek];
+                    let num_keys = Object.keys(data[dayOfWeek]).length;
+                    data_mut[(num_keys + 1).toString()] = shift;
+                    data_mut['status'] = 'set';
+                    chrome.storage.local.set({ [dayOfWeek]: data_mut })
+                    update_time_display();
+                })
+        });
+
     }
     /**
      * start putting times into TimesheetX
@@ -94,7 +132,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     /**
      * Clears the stack.
      */
-    function clear_stack(){
+    function clear_stack() {
         chrome.storage.local.remove("clear");
     }
     /**
@@ -110,7 +148,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         document.getElementById("clock_out").addEventListener("input", round_down);
         const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-        
+
         chrome.storage.local.get('Mon', function (items) {
             if (items.Mon == undefined) {
                 weekdays.forEach((weekday) => {
